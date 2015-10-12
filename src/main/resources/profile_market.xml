@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile name="GooglePlay" siteRoot="https://play.google.com">
+	<handler name="main">
+		<nav name="main">
+			<!-- ra can be 'relative' or 'absolute' -->
+			<target type="NavURL" ra="relative" method="get">/</target>
+			<handler>categories</handler>
+		</nav>
+	</handler>
+
+	<handler name="categories">
+		<nav name="categories">
+			<target type="NavMarket" group="1"><![CDATA[<li class="category-item "><a href="/apps/(.*?)"]]></target>
+			<handler>categoryPage</handler>
+		</nav>
+	</handler>
+
+	<handler name="categoryPage">
+		<nav name="app">
+			<target type="NavMarketApps" group="2"><![CDATA[<a class="title" title="(.*?)" href="(.*?)"]]></target>
+			<handler>productPage</handler>
+		</nav>
+	</handler>
+
+	<handler name="productPage">
+		<contentGroup>
+            <content type="ContentRegEx" group="1" name="versionName"><![CDATA[<div class="content" itemprop="softwareVersion">(.*?)</div>]]></content>
+            <content type="ContentRegEx" group="1" name="appName"><![CDATA[<div class="document-title" itemprop="name"> (?:<div>|<div dir="rtl">)(.*?)</div> </div>]]></content>
+            <content type="ContentRegEx" group="1" name="description"><![CDATA[<div class="show-more-content text-body" itemprop="description"> <div class="id-app-orig-desc">(.*?)</div>]]></content>
+            <content type="ContentRegEx" group="1" name="lastUpdated"><![CDATA[<div class="content" itemprop="datePublished">(.*?)</div>]]></content>
+            <content type="ContentRegEx" group="1" name="minSDKVersion"><![CDATA[<div class="content" itemprop="operatingSystems">(.*?)</div>]]></content>
+            <content type="ContentRegEx" group="1" name="category"><![CDATA[<a class="document-subtitle category" href="/store/apps/category/(.*?)">(?:.*?)</a>]]></content>
+            <content type="ContentRegEx" group="1" name="size"><![CDATA[<div class="content" itemprop="fileSize">(.*?)</div> </div>]]></content>
+            <content type="ContentRegEx" group="1" name="contentRating"><![CDATA[<div class="content" itemprop="contentRating">(.*?)</div>]]></content>
+            <content type="ContentRegEx" group="1" name="rating"><![CDATA[itemprop="ratingCount"> <div class="score">(.*?)</div>]]></content>
+            
+            <content type="ContentRegEx" group="1" name="fiveStars"><![CDATA[<div class="rating-bar-container five"> <span class="bar-label"> <span class="star-tiny star-full"></span>5 </span> <span class="bar" style="width:(?:.*?)"></span> <span class="bar-number">(.*?)</span> </div>]]></content>
+            <content type="ContentRegEx" group="1" name="fourStars"><![CDATA[<div class="rating-bar-container four"> <span class="bar-label"> <span class="star-tiny star-full"></span>4 </span> <span class="bar" style="width:(?:.*?)"></span> <span class="bar-number">(.*?)</span>]]></content>
+            <content type="ContentRegEx" group="1" name="threeStars"><![CDATA[<div class="rating-bar-container three"> <span class="bar-label"> <span class="star-tiny star-full"></span>3 </span> <span class="bar" style="width:(?:.*?)"></span> <span class="bar-number">(.*?)</span> </div>]]></content>
+            <content type="ContentRegEx" group="1" name="twoStars"><![CDATA[<div class="rating-bar-container two"> <span class="bar-label"> <span class="star-tiny star-full"></span>2 </span> <span class="bar" style="width:(?:.*?)"></span> <span class="bar-number">(.*?)</span> </div>]]></content>
+            <content type="ContentRegEx" group="1" name="oneStars"><![CDATA[<div class="rating-bar-container one"> <span class="bar-label"> <span class="star-tiny star-full"></span>1 </span> <span class="bar" style="width:(?:.*?)"></span> <span class="bar-number">(.*?)</span> </div>]]></content>
+            
+            <!-- content type="ContentRegEx" group="1" name="videoURL"><![CDATA[<param name="movie" value= "(.*?)" >]]></content>  -->
+            <content type="ContentRegEx" group="1" name="price"><![CDATA[itemprop="offerType"> <meta content="(.*?)" itemprop="price">]]></content>
+            <content type="ContentRegEx" group="1" name="developer"><![CDATA[<a class="document-subtitle primary" href="/store/apps/developer[?]id=(?:.*?)"> <span itemprop="name">(.*?)</span> </a>]]></content>
+            <!-- <span class="contact-developer-spacer"></span> -->
+	        <!--  <content type="ContentRegEx" group="1" name="developerEmail"><![CDATA[<a class="dev-link" href="mailto:(.*?)" target="_blank" rel="nofollow"> Email Developer </a>]]></content> -->
+            <!--  <content type="ContentRegEx" group="1" name="developerEmail"><![CDATA[<a class="dev-link" href="mailto:(.*?)" rel="nofollow" target="_blank"> Email Developer </a>]]></content> -->
+            <content type="ContentRegEx" group="1" name="developerEmail"><![CDATA[<a class="dev-link" href="mailto:(.*?)" rel="nofollow" target="_blank"> Email]]></content>
+            <content type="ContentRegEx" group="1" name="developerWebsite"><![CDATA[<a class="dev-link" href="https://www.google.com/url[?]q=(.*?)&amp;]]></content>
+            <content type="ContentRegEx" group="1" name="numDownloads"><![CDATA[<div class="content" itemprop="numDownloads">(.*?) - ]]></content>
+            <!-- not sure what was this field suppose to be but it's all empty in the db -->
+            <!-- <content type="ContentRegExMulti" group="all" name="userReviews"><![CDATA[<div class="doc-review"><h4>(.*?)</h4>.*?<p>(.*?)</p>]]></content> -->
+            <!-- <content type="ContentRegExMultiImage" group="1" name="icon"><![CDATA[<div class="cover-container"> <img class="cover-image" src="(.*?)" alt="Cover art" itemprop="image"> </div>]]></content> -->
+            <content type="ContentRegExMultiImage" group="1" name="icon"><![CDATA[<div class="cover-container"> <img class="cover-image" src="(.*?)=w300]]></content>
+            <content type="ContentRegExMultiImage" group="2" name="screenshot"><![CDATA[<img class="screenshot" alt="(?:.*?) - screenshot thumbnail" data-expand-to="full-screenshot-(.)" src="(.{1,300}?)" itemprop="screenshot">]]></content>
+            <content type="ContentRegExMultiImage" group="2" name="screenshotHD"><![CDATA[<img class="(?:screenshot|screenshot clickable)" alt="(?:.*?) - screenshot thumbnail" data-expand-to="full-screenshot-(.)" src="(.{1,300}?)=h310" itemprop="screenshot">]]></content>
+            <content type="ContentRegExMultiImage" group="1" name="iconHD"><![CDATA[<div class="cover-container"> <img class="cover-image" src="(.*?)=w300]]></content>
+            <content type="ContentRegExMultiImage" group="1" name="banner"><![CDATA[<div class="doc-banner-image-container"><img src="(.*?)=w]]></content>  
+		</contentGroup>
+	</handler>
+</profile>
